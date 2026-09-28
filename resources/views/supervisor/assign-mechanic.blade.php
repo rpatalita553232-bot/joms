@@ -25,9 +25,17 @@
 
                 </div>
 
+                @if(session('success'))
+                    <div class="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">{{ session('success') }}</div>
+                @endif
+
+                @if(session('error'))
+                    <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{{ session('error') }}</div>
+                @endif
+
 
                 {{-- Search + Filter --}}
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('supervisor.assign-mechanic') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -39,6 +47,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search Job Orders..."
                             class="w-full rounded-lg border border-gray-200
                                    py-2 pl-9 pr-3 text-sm
@@ -51,10 +61,7 @@
 
 
                     {{-- Filter --}}
-                    <div
-                        class="relative"
-                        x-data="{ open: false }"
-                    >
+                    <div class="hidden relative" x-data="{ open: false }">
 
                         <button
                             type="button"
@@ -198,7 +205,9 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                    <a href="{{ route('supervisor.assign-mechanic') }}" class="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Reset</a>
+                </form>
 
 
                 {{-- Available Job Orders --}}
@@ -220,6 +229,39 @@
 
                     {{-- Job Orders --}}
                     <div class="p-4 flex flex-col gap-3">
+                        @forelse ($jobOrders as $jobOrder)
+                            <div class="rounded-xl border border-gray-200 p-4">
+                                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <a href="{{ route('job-orders.show', $jobOrder) }}" class="text-sm font-medium hover:underline">JO-{{ $jobOrder->job_order_id }}</a>
+                                            <span class="rounded-md bg-green-50 px-2 py-1 text-xs text-green-700">Approved</span>
+                                        </div>
+                                        <p class="mt-1 text-sm">{{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</p>
+                                        <p class="mt-0.5 text-xs text-gray-500">{{ $jobOrder->vehicle?->make ?? 'Unknown vehicle' }} {{ $jobOrder->vehicle?->engine_model ?? '' }} · {{ $jobOrder->services->first()?->job_desc ?? 'Service not set' }}</p>
+                                    </div>
+                                    <form method="POST" action="{{ route('supervisor.job-orders.assign', $jobOrder) }}" class="flex w-full flex-col gap-2 sm:flex-row sm:items-end lg:w-auto">
+                                        @csrf
+                                        <div class="w-full sm:w-64">
+                                            <label for="staff_id_{{ $jobOrder->job_order_id }}" class="mb-1 block text-xs font-medium text-gray-600">Mechanic</label>
+                                            <select id="staff_id_{{ $jobOrder->job_order_id }}" name="staff_id" required class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-100">
+                                                <option value="">Select mechanic</option>
+                                                @foreach ($mechanics as $mechanic)
+                                                    <option value="{{ $mechanic->staff_id }}">{{ trim($mechanic->staff_first.' '.($mechanic->staff_middle ?? '').' '.$mechanic->staff_last) }} · {{ $mechanic->active_job_orders_count }} active</option>
+                                                @endforeach
+                                            </select>
+                                            <x-input-error :messages="$errors->get('staff_id')" class="mt-1" />
+                                        </div>
+                                        <button type="submit" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-user-check"></i> Assign</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">No approved job orders are waiting for assignment.</div>
+                        @endforelse
+                    </div>
+
+                    <div class="hidden p-4 flex flex-col gap-3">
 
 
                         {{-- ========================================= --}}
@@ -731,10 +773,21 @@
                     </p>
 
 
-                    <div
-                        class="grid grid-cols-1 sm:grid-cols-2
-                               lg:grid-cols-4 gap-3"
-                    >
+                    <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        @forelse ($mechanics as $mechanic)
+                            <div class="rounded-lg border border-gray-200 p-4">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-sm font-medium">{{ trim($mechanic->staff_first.' '.($mechanic->staff_middle ?? '').' '.$mechanic->staff_last) }}</p>
+                                    <span class="h-2 w-2 rounded-full {{ $mechanic->active_job_orders_count > 0 ? 'bg-green-500' : 'bg-gray-400' }}"></span>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">{{ $mechanic->active_job_orders_count }} active job order{{ $mechanic->active_job_orders_count === 1 ? '' : 's' }}</p>
+                            </div>
+                        @empty
+                            <p class="text-sm text-gray-500">No mechanics are available.</p>
+                        @endforelse
+                    </div>
+
+                    <div class="hidden grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
 
                         {{-- Adili --}}

@@ -45,11 +45,14 @@
                 {{-- Form --}}
                 <form
                     method="POST"
-                    action="#"
+                    action="{{ isset($vehicle) ? route('admin.vehicles.update', $vehicle) : route('admin.vehicles.store') }}"
                     class="max-w-3xl"
                 >
 
                     @csrf
+                    @isset($vehicle)
+                        @method('PUT')
+                    @endisset
 
 
                     {{-- Vehicle Information --}}
@@ -77,42 +80,30 @@
                                 <div class="sm:col-span-2">
 
                                     <label
-                                        for="customer"
+                                        for="cust_id"
                                         class="block text-sm font-medium text-gray-700"
                                     >
                                         Customer
                                     </label>
 
                                     <select
-                                        id="customer"
-                                        name="customer"
+                                        id="cust_id"
+                                        name="cust_id"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                bg-white px-3 py-2.5 text-sm
                                                focus:border-gray-400 focus:outline-none
                                                focus:ring-2 focus:ring-gray-100"
                                     >
 
-                                        <option value="">
-                                            Select customer
-                                        </option>
-
-                                        <option value="Juan Dela Cruz">
-                                            Juan Dela Cruz
-                                        </option>
-
-                                        <option value="Ana Reyes">
-                                            Ana Reyes
-                                        </option>
-
-                                        <option value="Mark Santos">
-                                            Mark Santos
-                                        </option>
-
-                                        <option value="Liza Cruz">
-                                            Liza Cruz
-                                        </option>
+                                        <option value="">Select customer</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->cust_id }}" @selected((string) old('cust_id', $vehicle->cust_id ?? '') === (string) $customer->cust_id)>
+                                                {{ trim($customer->first_name.' '.($customer->middle_name ?? '').' '.$customer->last_name) }}
+                                            </option>
+                                        @endforeach
 
                                     </select>
+                                    <x-input-error :messages="$errors->get('cust_id')" class="mt-2" />
 
                                 </div>
 
@@ -131,7 +122,7 @@
                                         id="make"
                                         type="text"
                                         name="make"
-                                        value="{{ old('make') }}"
+                                        value="{{ old('make', $vehicle->make ?? '') }}"
                                         placeholder="Toyota"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                px-3 py-2.5 text-sm
@@ -139,6 +130,7 @@
                                                focus:border-gray-400 focus:outline-none
                                                focus:ring-2 focus:ring-gray-100"
                                     >
+                                    <x-input-error :messages="$errors->get('make')" class="mt-2" />
 
                                 </div>
 
@@ -147,17 +139,17 @@
                                 <div>
 
                                     <label
-                                        for="model"
+                                        for="engine_model"
                                         class="block text-sm font-medium text-gray-700"
                                     >
                                         Model
                                     </label>
 
                                     <input
-                                        id="model"
+                                        id="engine_model"
                                         type="text"
-                                        name="model"
-                                        value="{{ old('model') }}"
+                                        name="engine_model"
+                                        value="{{ old('engine_model', $vehicle->engine_model ?? '') }}"
                                         placeholder="Vios"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                px-3 py-2.5 text-sm
@@ -165,34 +157,7 @@
                                                focus:border-gray-400 focus:outline-none
                                                focus:ring-2 focus:ring-gray-100"
                                     >
-
-                                </div>
-
-
-                                {{-- Year --}}
-                                <div>
-
-                                    <label
-                                        for="year"
-                                        class="block text-sm font-medium text-gray-700"
-                                    >
-                                        Year
-                                    </label>
-
-                                    <input
-                                        id="year"
-                                        type="number"
-                                        name="year"
-                                        value="{{ old('year') }}"
-                                        placeholder="2022"
-                                        min="1900"
-                                        max="{{ date('Y') + 1 }}"
-                                        class="mt-1.5 block w-full rounded-lg border border-gray-200
-                                               px-3 py-2.5 text-sm
-                                               placeholder:text-gray-400
-                                               focus:border-gray-400 focus:outline-none
-                                               focus:ring-2 focus:ring-gray-100"
-                                    >
+                                    <x-input-error :messages="$errors->get('engine_model')" class="mt-2" />
 
                                 </div>
 
@@ -211,7 +176,7 @@
                                         id="plate_number"
                                         type="text"
                                         name="plate_number"
-                                        value="{{ old('plate_number') }}"
+                                        value="{{ old('plate_number', $vehicle->plate_number ?? '') }}"
                                         placeholder="ABC 1234"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                px-3 py-2.5 text-sm uppercase
@@ -219,54 +184,7 @@
                                                focus:border-gray-400 focus:outline-none
                                                focus:ring-2 focus:ring-gray-100"
                                     >
-
-                                </div>
-
-
-                                {{-- Vehicle Type --}}
-                                <div>
-
-                                    <label
-                                        for="vehicle_type"
-                                        class="block text-sm font-medium text-gray-700"
-                                    >
-                                        Vehicle type
-                                    </label>
-
-                                    <select
-                                        id="vehicle_type"
-                                        name="vehicle_type"
-                                        class="mt-1.5 block w-full rounded-lg border border-gray-200
-                                               bg-white px-3 py-2.5 text-sm
-                                               focus:border-gray-400 focus:outline-none
-                                               focus:ring-2 focus:ring-gray-100"
-                                    >
-
-                                        <option value="">
-                                            Select type
-                                        </option>
-
-                                        <option value="Car">
-                                            Car
-                                        </option>
-
-                                        <option value="SUV">
-                                            SUV
-                                        </option>
-
-                                        <option value="Truck">
-                                            Truck
-                                        </option>
-
-                                        <option value="Van">
-                                            Van
-                                        </option>
-
-                                        <option value="Other">
-                                            Other
-                                        </option>
-
-                                    </select>
+                                    <x-input-error :messages="$errors->get('plate_number')" class="mt-2" />
 
                                 </div>
 
@@ -296,7 +214,7 @@
                                    font-medium text-white hover:bg-gray-800"
                         >
                             <i class="ti ti-car"></i>
-                            Add vehicle
+                            {{ isset($vehicle) ? 'Save changes' : 'Add vehicle' }}
                         </button>
 
                     </div>

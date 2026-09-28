@@ -26,7 +26,7 @@
                         <i class="ti ti-chevron-right text-xs"></i>
 
                         <span class="text-gray-600">
-                            Add customer
+                            {{ isset($customer) ? 'Edit customer' : 'Add customer' }}
                         </span>
 
                     </div>
@@ -45,11 +45,14 @@
                 {{-- Form --}}
                 <form
                     method="POST"
-                    action="#"
+                    action="{{ isset($customer) ? route('admin.customers.update', $customer) : route('admin.customers.store') }}"
                     class="max-w-3xl"
                 >
 
                     @csrf
+                    @isset($customer)
+                        @method('PUT')
+                    @endisset
 
 
                     {{-- Customer Information --}}
@@ -87,7 +90,7 @@
                                         id="first_name"
                                         type="text"
                                         name="first_name"
-                                        value="{{ old('first_name') }}"
+                                        value="{{ old('first_name', $customer->first_name ?? '') }}"
                                         placeholder="Juan"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                px-3 py-2.5 text-sm
@@ -96,11 +99,7 @@
                                                focus:ring-2 focus:ring-gray-100"
                                     >
 
-                                    @error('first_name')
-                                        <p class="mt-1.5 text-xs text-red-600">
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
+                                    <x-input-error :messages="$errors->get('first_name')" class="mt-2" />
 
                                 </div>
 
@@ -117,7 +116,7 @@
                                         id="middle_name"
                                         type="text"
                                         name="middle_name"
-                                        value="{{ old('middle_name') }}"
+                                        value="{{ old('middle_name', $customer->middle_name ?? '') }}"
                                         placeholder="Juan"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                px-3 py-2.5 text-sm
@@ -126,11 +125,7 @@
                                                focus:ring-2 focus:ring-gray-100"
                                     >
 
-                                    @error('middle_name')
-                                        <p class="mt-1.5 text-xs text-red-600">
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
+                                    <x-input-error :messages="$errors->get('middle_name')" class="mt-2" />
 
                                 </div>
 
@@ -149,7 +144,7 @@
                                         id="last_name"
                                         type="text"
                                         name="last_name"
-                                        value="{{ old('last_name') }}"
+                                        value="{{ old('last_name', $customer->last_name ?? '') }}"
                                         placeholder="Dela Cruz"
                                         class="mt-1.5 block w-full rounded-lg border border-gray-200
                                                px-3 py-2.5 text-sm
@@ -158,11 +153,7 @@
                                                focus:ring-2 focus:ring-gray-100"
                                     >
 
-                                    @error('last_name')
-                                        <p class="mt-1.5 text-xs text-red-600">
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
+                                    <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
 
                                 </div>
 
@@ -185,7 +176,7 @@
                                             id="contact_number"
                                             type="text"
                                             name="contact_number"
-                                            value="{{ old('contact_number') }}"
+                                            value="{{ old('contact_number', $customer->contact_number ?? '') }}"
                                             placeholder="09XXXXXXXXX"
                                             class="block w-full rounded-lg border border-gray-200
                                                    py-2.5 pl-10 pr-3 text-sm
@@ -195,38 +186,7 @@
                                         >
 
                                     </div>
-
-                                </div>
-
-
-                                {{-- Email --}}
-                                <div>
-
-                                    <label
-                                        for="email"
-                                        class="block text-sm font-medium text-gray-700"
-                                    >
-                                        Email
-                                    </label>
-
-                                    <div class="relative mt-1.5">
-
-                                        <i class="ti ti-mail absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-
-                                        <input
-                                            id="email"
-                                            type="email"
-                                            name="email"
-                                            value="{{ old('email') }}"
-                                            placeholder="customer@example.com"
-                                            class="block w-full rounded-lg border border-gray-200
-                                                   py-2.5 pl-10 pr-3 text-sm
-                                                   placeholder:text-gray-400
-                                                   focus:border-gray-400 focus:outline-none
-                                                   focus:ring-2 focus:ring-gray-100"
-                                        >
-
-                                    </div>
+                                    <x-input-error :messages="$errors->get('contact_number')" class="mt-2" />
 
                                 </div>
 
@@ -251,7 +211,8 @@
                                                placeholder:text-gray-400
                                                focus:border-gray-400 focus:outline-none
                                                focus:ring-2 focus:ring-gray-100"
-                                    >{{ old('address') }}</textarea>
+                                    >{{ old('address', $customer->address ?? '') }}</textarea>
+                                    <x-input-error :messages="$errors->get('address')" class="mt-2" />
 
                                 </div>
 
@@ -281,7 +242,7 @@
                                    font-medium text-white hover:bg-gray-800"
                         >
                             <i class="ti ti-user-plus"></i>
-                            Add customer
+                            {{ isset($customer) ? 'Save changes' : 'Add customer' }}
                         </button>
 
                     </div>

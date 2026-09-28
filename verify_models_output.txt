@@ -1,0 +1,117 @@
+TABLE:customers
+array:9 [
+  0 => "cust_id"
+  1 => "first_name"
+  2 => "middle_name"
+  3 => "last_name"
+  4 => "contact_number"
+  5 => "address"
+  6 => "created_by"
+  7 => "created_at"
+  8 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:vehicles
+array:7 [
+  0 => "vehicle_id"
+  1 => "cust_id"
+  2 => "plate_number"
+  3 => "make"
+  4 => "engine_model"
+  5 => "created_at"
+  6 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:staff
+array:10 [
+  0 => "staff_id"
+  1 => "user_id"
+  2 => "staff_first"
+  3 => "staff_middle"
+  4 => "staff_last"
+  5 => "contact_number"
+  6 => "address"
+  7 => "created_by"
+  8 => "created_at"
+  9 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:services
+array:5 [
+  0 => "service_id"
+  1 => "job_desc"
+  2 => "price"
+  3 => "created_at"
+  4 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:job_orders
+array:12 [
+  0 => "job_order_id"
+  1 => "cust_id"
+  2 => "vehicle_id"
+  3 => "created_by"
+  4 => "problem_description"
+  5 => "remarks"
+  6 => "status"
+  7 => "date_issued"
+  8 => "expected_cmpl_date"
+  9 => "total_cost"
+  10 => "created_at"
+  11 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:job_order_services
+array:5 [
+  0 => "id"
+  1 => "job_order_id"
+  2 => "service_id"
+  3 => "created_at"
+  4 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:job_order_assignments
+array:8 [
+  0 => "id"
+  1 => "job_order_id"
+  2 => "staff_id"
+  3 => "assigned_by"
+  4 => "assigned_date"
+  5 => "remarks"
+  6 => "created_at"
+  7 => "updated_at"
+] // verify_models.php:20
+---
+TABLE:job_order_approvals
+array:8 [
+  0 => "id"
+  1 => "job_order_id"
+  2 => "approved_by"
+  3 => "status"
+  4 => "remarks"
+  5 => "action_date"
+  6 => "created_at"
+  7 => "updated_at"
+] // verify_models.php:20
+---
+QUERY:Customer::first()
+null // verify_models.php:35
+---
+QUERY:Vehicle::first()
+null // verify_models.php:35
+---
+QUERY:Staff::first()
+null // verify_models.php:35
+---
+QUERY:Service::first()
+null // verify_models.php:35
+---
+QUERY:JobOrder::with(['customer', 'vehicle'])->first()
+null // verify_models.php:35
+---
+QUERY:JobOrderAssignment::with(['jobOrder', 'staff'])->first()
+null // verify_models.php:35
+---
+QUERY:JobOrderApproval::with(['jobOrder', 'approvedBy'])->first()
+null // verify_models.php:35
+---

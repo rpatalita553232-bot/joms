@@ -37,7 +37,7 @@
 
 
                 <!-- Search + Filter -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('admin.services') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -49,6 +49,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search services..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -173,7 +175,8 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                </form>
 
 
                 <!-- Services -->
@@ -186,127 +189,40 @@
                         </p>
 
                         <p class="text-xs text-gray-500 mt-1">
-                            Available services for job orders
+                            {{ $services->count() }} available services for job orders
                         </p>
 
                     </div>
 
 
                     <div>
-
-                        <!-- Service -->
-                        <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100 hover:bg-gray-50">
-
-                            <div class="h-10 w-10 shrink-0 rounded-lg bg-gray-50 flex items-center justify-center">
-                                <i class="ti ti-disc text-lg text-gray-500"></i>
+                        @forelse ($services as $service)
+                            <div class="flex items-center gap-4 border-b border-gray-100 px-5 py-4 last:border-0 hover:bg-gray-50">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-50">
+                                    <i class="ti ti-tool text-lg text-gray-500"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-medium">{{ $service->job_desc }}</p>
+                                    <p class="mt-0.5 text-xs text-gray-500">Service #{{ $service->service_id }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">₱{{ number_format((float) $service->price, 2) }}</p>
+                                    <p class="text-xs text-green-600">Available</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.services.edit', $service) }}" class="text-gray-500 hover:text-gray-900" aria-label="Edit service">
+                                        <i class="ti ti-edit"></i>
+                                    </a>
+                                    <form method="POST" action="{{ route('admin.services.destroy', $service) }}" onsubmit="return confirm('Delete this service?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 hover:text-red-700" aria-label="Delete service"><i class="ti ti-trash"></i></button>
+                                    </form>
+                                </div>
                             </div>
-
-                            <div class="min-w-0 flex-1">
-
-                                <p class="font-medium">
-                                    Brake repair
-                                </p>
-
-                                <p class="text-xs text-gray-500 mt-0.5">
-                                    Brake inspection and repair service
-                                </p>
-
-                            </div>
-
-                            <div class="text-right">
-
-                                <p class="font-medium">
-                                    ₱2,500
-                                </p>
-
-                                <p class="text-xs text-green-600">
-                                    Active
-                                </p>
-
-                            </div>
-
-                            <button class="text-gray-400 hover:text-gray-900">
-                                <i class="ti ti-dots-vertical"></i>
-                            </button>
-
-                        </div>
-
-
-                        <!-- Service -->
-                        <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100 hover:bg-gray-50">
-
-                            <div class="h-10 w-10 shrink-0 rounded-lg bg-gray-50 flex items-center justify-center">
-                                <i class="ti ti-settings text-lg text-gray-500"></i>
-                            </div>
-
-                            <div class="min-w-0 flex-1">
-
-                                <p class="font-medium">
-                                    Engine tune-up
-                                </p>
-
-                                <p class="text-xs text-gray-500 mt-0.5">
-                                    General engine inspection and tune-up
-                                </p>
-
-                            </div>
-
-                            <div class="text-right">
-
-                                <p class="font-medium">
-                                    ₱3,500
-                                </p>
-
-                                <p class="text-xs text-green-600">
-                                    Active
-                                </p>
-
-                            </div>
-
-                            <button class="text-gray-400 hover:text-gray-900">
-                                <i class="ti ti-dots-vertical"></i>
-                            </button>
-
-                        </div>
-
-
-                        <!-- Service -->
-                        <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50">
-
-                            <div class="h-10 w-10 shrink-0 rounded-lg bg-gray-50 flex items-center justify-center">
-                                <i class="ti ti-droplet text-lg text-gray-500"></i>
-                            </div>
-
-                            <div class="min-w-0 flex-1">
-
-                                <p class="font-medium">
-                                    Oil change
-                                </p>
-
-                                <p class="text-xs text-gray-500 mt-0.5">
-                                    Engine oil replacement and inspection
-                                </p>
-
-                            </div>
-
-                            <div class="text-right">
-
-                                <p class="font-medium">
-                                    ₱1,200
-                                </p>
-
-                                <p class="text-xs text-green-600">
-                                    Active
-                                </p>
-
-                            </div>
-
-                            <button class="text-gray-400 hover:text-gray-900">
-                                <i class="ti ti-dots-vertical"></i>
-                            </button>
-
-                        </div>
-
+                        @empty
+                            <p class="px-5 py-8 text-center text-sm text-gray-500">No services have been added.</p>
+                        @endforelse
                     </div>
 
                 </div>

@@ -34,7 +34,7 @@
 
 
                 <!-- Search + Filter -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('admin.customers') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -46,6 +46,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search customers..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -158,7 +160,8 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                </form>
 
 
                 <!-- Customer Table -->
@@ -170,7 +173,7 @@
                         </p>
 
                         <p class="text-xs text-gray-500 mt-1">
-                            184 customers
+                            {{ $customers->count() }} customers
                         </p>
                     </div>
 
@@ -207,195 +210,29 @@
 
 
                             <tbody>
-
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-                                        <p class="font-medium">Juan Dela Cruz</p>
-                                        <p class="text-xs text-gray-500">Customer #001</p>
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        0917 123 4567
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        2 vehicles
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        Sep 10, 2026
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center justify-end gap-2">
-
-                                            {{-- Edit --}}
-                                            <a
-                                                href="#"
-                                                class="inline-flex items-center gap-1.5 rounded-lg
-                                                    border border-gray-200 px-2.5 py-1.5
-                                                    text-xs font-medium text-gray-600
-                                                    transition hover:bg-gray-50 hover:text-gray-900"
-                                            >
-                                                <i class="ti ti-edit text-sm"></i>
-                                                Edit
-                                            </a>
-
-
-                                            {{-- Delete --}}
-                                            <form
-                                                method="POST"
-                                                action="#"
-                                                onsubmit="return confirm('Are you sure you want to delete this customer?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg
-                                                        border border-gray-200 px-2.5 py-1.5
-                                                        text-xs font-medium text-red-600
-                                                        transition hover:bg-red-50 hover:border-red-200"
-                                                >
-                                                    <i class="ti ti-trash text-sm"></i>
-                                                    Delete
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-                                        <p class="font-medium">Ana Reyes</p>
-                                        <p class="text-xs text-gray-500">Customer #002</p>
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        0918 456 7890
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        1 vehicle
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        Sep 9, 2026
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center justify-end gap-2">
-
-                                            {{-- Edit --}}
-                                            <a
-                                                href="#"
-                                                class="inline-flex items-center gap-1.5 rounded-lg
-                                                    border border-gray-200 px-2.5 py-1.5
-                                                    text-xs font-medium text-gray-600
-                                                    transition hover:bg-gray-50 hover:text-gray-900"
-                                            >
-                                                <i class="ti ti-edit text-sm"></i>
-                                                Edit
-                                            </a>
-
-
-                                            {{-- Delete --}}
-                                            <form
-                                                method="POST"
-                                                action="#"
-                                                onsubmit="return confirm('Are you sure you want to delete this customer?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg
-                                                        border border-gray-200 px-2.5 py-1.5
-                                                        text-xs font-medium text-red-600
-                                                        transition hover:bg-red-50 hover:border-red-200"
-                                                >
-                                                    <i class="ti ti-trash text-sm"></i>
-                                                    Delete
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr class="hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-                                        <p class="font-medium">Mark Santos</p>
-                                        <p class="text-xs text-gray-500">Customer #003</p>
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        0920 222 3333
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        3 vehicles
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        Sep 8, 2026
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center justify-end gap-2">
-
-                                            {{-- Edit --}}
-                                            <a
-                                                href="#"
-                                                class="inline-flex items-center gap-1.5 rounded-lg
-                                                    border border-gray-200 px-2.5 py-1.5
-                                                    text-xs font-medium text-gray-600
-                                                    transition hover:bg-gray-50 hover:text-gray-900"
-                                            >
-                                                <i class="ti ti-edit text-sm"></i>
-                                                Edit
-                                            </a>
-
-
-                                            {{-- Delete --}}
-                                            <form
-                                                method="POST"
-                                                action="#"
-                                                onsubmit="return confirm('Are you sure you want to delete this customer?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg
-                                                        border border-gray-200 px-2.5 py-1.5
-                                                        text-xs font-medium text-red-600
-                                                        transition hover:bg-red-50 hover:border-red-200"
-                                                >
-                                                    <i class="ti ti-trash text-sm"></i>
-                                                    Delete
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
+                                @forelse ($customers as $customer)
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-5 py-3">
+                                            <p class="font-medium">{{ trim($customer->first_name.' '.($customer->middle_name ?? '').' '.$customer->last_name) }}</p>
+                                            <p class="text-xs text-gray-500">Customer #{{ $customer->cust_id }}</p>
+                                        </td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $customer->contact_number }}</td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $customer->vehicles_count }} vehicle{{ $customer->vehicles_count === 1 ? '' : 's' }}</td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $customer->created_at?->format('M d, Y') ?? 'N/A' }}</td>
+                                        <td class="px-5 py-3">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a href="{{ route('admin.customers.edit', $customer) }}" class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"><i class="ti ti-edit text-sm"></i> Edit</a>
+                                                <form method="POST" action="{{ route('admin.customers.destroy', $customer) }}" onsubmit="return confirm('Are you sure you want to delete this customer?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 hover:border-red-200"><i class="ti ti-trash text-sm"></i> Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-500">No customers found.</td></tr>
+                                @endforelse
                             </tbody>
 
                         </table>

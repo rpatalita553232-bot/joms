@@ -23,8 +23,7 @@
                 </div>
 
 
-                <!-- Search + Filter -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('supervisor.AJO') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -36,6 +35,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search Job Orders..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -48,10 +49,7 @@
 
 
                     {{-- Filter --}}
-                    <div
-                        class="relative"
-                        x-data="{ open: false }"
-                    >
+                    <div class="hidden relative" x-data="{ open: false }">
 
                         <button
                             type="button"
@@ -189,7 +187,15 @@
 
                     </div>
 
-                </div>
+                    <select name="status" class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600">
+                        <option value="">All statuses</option>
+                        @foreach (['pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected', 'in_progress' => 'In progress', 'completed' => 'Completed'] as $value => $label)
+                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                    <a href="{{ route('supervisor.AJO') }}" class="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Reset</a>
+                </form>
 
 
                 <!-- Table -->
@@ -202,7 +208,7 @@
                         </p>
 
                         <p class="text-xs text-gray-500 mt-1">
-                            All job orders submitted to the shop
+                            {{ $jobOrders->count() }} job order{{ $jobOrders->count() === 1 ? '' : 's' }} submitted to the shop
                         </p>
 
                     </div>
@@ -250,6 +256,34 @@
 
 
                             <tbody>
+                                @forelse ($jobOrders as $jobOrder)
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-5 py-3 font-medium"><a href="{{ route('job-orders.show', $jobOrder) }}" class="hover:underline">JO-{{ $jobOrder->job_order_id }}</a></td>
+                                        <td class="px-5 py-3">{{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $jobOrder->vehicle?->plate_number ?? 'N/A' }} · {{ $jobOrder->vehicle?->make ?? '' }} {{ $jobOrder->vehicle?->engine_model ?? '' }}</td>
+                                        <td class="px-5 py-3 text-gray-600">
+                                            @php($staffMember = $jobOrder->jobOrderAssignments->first()?->staff)
+                                            {{ $staffMember ? (trim($staffMember->staff_first.' '.($staffMember->staff_middle ?? '').' '.$staffMember->staff_last) ?: ($staffMember->user?->name ?? '—')) : '—' }}
+                                        </td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $jobOrder->date_issued ? \Illuminate\Support\Facades\Date::parse($jobOrder->date_issued)->format('M d, Y') : 'N/A' }}</td>
+                                        <td class="px-5 py-3">
+                                            <span @class([
+                                                'rounded-md px-2.5 py-1 text-xs',
+                                                'bg-yellow-50 text-yellow-700' => $jobOrder->status === 'pending',
+                                                'bg-green-50 text-green-700' => $jobOrder->status === 'approved',
+                                                'bg-red-50 text-red-700' => $jobOrder->status === 'rejected',
+                                                'bg-blue-50 text-blue-700' => $jobOrder->status === 'in_progress',
+                                                'bg-gray-100 text-gray-700' => $jobOrder->status === 'completed',
+                                            ])>{{ ucfirst(str_replace('_', ' ', $jobOrder->status)) }}</span>
+                                        </td>
+                                        <td class="px-5 py-3 text-right"><a href="{{ route('job-orders.show', $jobOrder) }}" class="text-gray-500 hover:text-gray-900" aria-label="View job order"><i class="ti ti-chevron-right"></i></a></td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="7" class="px-5 py-8 text-center text-sm text-gray-500">No job orders match this search.</td></tr>
+                                @endforelse
+                            </tbody>
+
+                            <tbody class="hidden">
 
                                 <tr class="border-b border-gray-100 hover:bg-gray-50">
 

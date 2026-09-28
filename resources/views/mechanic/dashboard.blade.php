@@ -46,9 +46,7 @@
                         Tasks
                     </p>
 
-                    <p class="text-2xl font-medium">
-                        4
-                    </p>
+                    <p class="text-2xl font-medium">{{ $inProgressCount }}</p>
 
                 </div>
 
@@ -59,22 +57,18 @@
                         Pending
                     </p>
 
-                    <p class="text-2xl font-medium">
-                        2
-                    </p>
+                    <p class="text-2xl font-medium">{{ $pendingCount }}</p>
 
                 </div>
 
 
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="rounded-lg border border-red-200 bg-red-50 p-4">
 
-                    <p class="text-[13px] text-gray-500 mb-1.5">
+                    <p class="mb-1.5 text-[13px] text-red-700">
                         Needs revision
                     </p>
 
-                    <p class="text-2xl font-medium">
-                        1
-                    </p>
+                    <p class="text-2xl font-medium text-red-800">{{ $needsRevisionCount }}</p>
 
                 </div>
 
@@ -82,12 +76,10 @@
                 <div class="bg-gray-50 rounded-lg p-4">
 
                     <p class="text-[13px] text-gray-500 mb-1.5">
-                        Approved Job Order
+                        Job orders created
                     </p>
 
-                    <p class="text-2xl font-medium">
-                        7
-                    </p>
+                    <p class="text-2xl font-medium">{{ $createdJobOrderCount }}</p>
 
                 </div>
 
@@ -106,7 +98,7 @@
                         </p>
                     </div>
 
-                    <a href="{{ route('supervisor.pending-approvals') }}"
+                    <a href="{{ route('mechanic.MJO') }}"
                         class="text-[13px] font-medium text-gray-700 hover:text-gray-900 transition">
                         View all
                     </a>
@@ -132,106 +124,19 @@
                         </thead>
 
                         <tbody class="divide-y divide-gray-100">
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-                                            <i class="ti ti-tool text-[18px] text-gray-600"></i>
-                                        </div>
-
-                                        <div>
-                                            <p class="text-[13px] font-medium text-gray-900">
-                                                Brake inspection
-                                            </p>
-                                            <p class="text-[12px] text-gray-500">
-                                                Toyota Vios
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="px-5 py-4 text-[13px] text-gray-700">
-                                    JO-2026-0012
-                                </td>
-
-                                <td class="px-5 py-4 text-[13px] text-gray-600">
-                                    Sep 19, 2026
-                                </td>
-
-                                <td class="px-5 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-700 text-[11px] font-medium">
-                                        Pending
-                                    </span>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-                                            <i class="ti ti-settings text-[18px] text-gray-600"></i>
-                                        </div>
-
-                                        <div>
-                                            <p class="text-[13px] font-medium text-gray-900">
-                                                Engine tune-up
-                                            </p>
-                                            <p class="text-[12px] text-gray-500">
-                                                Mitsubishi Mirage
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="px-5 py-4 text-[13px] text-gray-700">
-                                    JO-2026-0010
-                                </td>
-
-                                <td class="px-5 py-4 text-[13px] text-gray-600">
-                                    Sep 20, 2026
-                                </td>
-
-                                <td class="px-5 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-700 text-[11px] font-medium">
-                                        Pending
-                                    </span>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-                                            <i class="ti ti-car text-[18px] text-gray-600"></i>
-                                        </div>
-
-                                        <div>
-                                            <p class="text-[13px] font-medium text-gray-900">
-                                                Oil change
-                                            </p>
-                                            <p class="text-[12px] text-gray-500">
-                                                Toyota Innova
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="px-5 py-4 text-[13px] text-gray-700">
-                                    JO-2026-0008
-                                </td>
-
-                                <td class="px-5 py-4 text-[13px] text-gray-600">
-                                    Sep 21, 2026
-                                </td>
-
-                                
-
-                                <td class="px-5 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[11px] font-medium">
-                                        Approved
-                                    </span>
-                                </td>
-                            </tr>
+                            @forelse ($assignedJobOrders as $jobOrder)
+                                <tr class="transition hover:bg-gray-50">
+                                    <td class="px-5 py-4">
+                                        <p class="text-[13px] font-medium text-gray-900">{{ $jobOrder->services->first()?->job_desc ?? 'Job order' }}</p>
+                                        <p class="text-[12px] text-gray-500">{{ $jobOrder->vehicle?->make ?? 'Unknown vehicle' }} {{ $jobOrder->vehicle?->engine_model ?? '' }}</p>
+                                    </td>
+                                    <td class="px-5 py-4 text-[13px] text-gray-700"><a href="{{ route('job-orders.show', $jobOrder) }}" class="hover:underline">JO-{{ $jobOrder->job_order_id }}</a></td>
+                                    <td class="px-5 py-4 text-[13px] text-gray-600">{{ $jobOrder->expected_cmpl_date ? \Illuminate\Support\Facades\Date::parse($jobOrder->expected_cmpl_date)->format('M d, Y') : 'N/A' }}</td>
+                                    <td class="px-5 py-4"><span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700">In progress</span></td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="4" class="px-5 py-8 text-center text-sm text-gray-500">No job orders are assigned to you yet.</td></tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -247,52 +152,24 @@
 
 
                 <div class="flex flex-col gap-2">
-
-                    <!-- Job Order 1 -->
-                    <div class="flex items-center justify-between gap-4 border border-gray-200 rounded-lg px-4 py-3">
-
-                        <div class="min-w-0">
-
-                            <p class="text-sm font-medium">
-                                JO-1042 · Juan Dela Cruz
-                            </p>
-
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                Toyota Vios · Brake repair
-                            </p>
-
-                        </div>
-
-
-                        <span class="shrink-0 bg-yellow-50 text-yellow-700 text-xs px-2.5 py-1 rounded-md">
-                            Pending
-                        </span>
-
-                    </div>
-
-
-                    <!-- Job Order 2 -->
-                    <div class="flex items-center justify-between gap-4 border border-gray-200 rounded-lg px-4 py-3">
-
-                        <div class="min-w-0">
-
-                            <p class="text-sm font-medium">
-                                JO-1037 · Liza Cruz
-                            </p>
-
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                Suzuki Ertiga · Suspension check
-                            </p>
-
-                        </div>
-
-
-                        <span class="shrink-0 bg-green-50 text-green-700 text-xs px-2.5 py-1 rounded-md">
-                            Approved
-                        </span>
-
-                    </div>
-
+                    @forelse ($createdJobOrders as $jobOrder)
+                        <a href="{{ route('job-orders.show', $jobOrder) }}" class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 px-4 py-3 hover:bg-gray-50">
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium">JO-{{ $jobOrder->job_order_id }} · {{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</p>
+                                <p class="mt-0.5 text-xs text-gray-500">{{ $jobOrder->vehicle?->make ?? 'Unknown vehicle' }} {{ $jobOrder->vehicle?->engine_model ?? '' }}</p>
+                            </div>
+                            <span @class([
+                                'shrink-0 rounded-md px-2.5 py-1 text-xs',
+                                'bg-yellow-50 text-yellow-700' => $jobOrder->status === 'pending',
+                                'bg-green-50 text-green-700' => $jobOrder->status === 'approved',
+                                'bg-red-50 text-red-700' => $jobOrder->status === 'rejected',
+                                'bg-blue-50 text-blue-700' => $jobOrder->status === 'in_progress',
+                                'bg-gray-100 text-gray-700' => $jobOrder->status === 'completed',
+                            ])>{{ ucfirst(str_replace('_', ' ', $jobOrder->status)) }}</span>
+                        </a>
+                    @empty
+                        <p class="rounded-lg border border-dashed border-gray-200 p-5 text-center text-sm text-gray-500">You have not created any job orders yet.</p>
+                    @endforelse
                 </div>
 
             </div>
@@ -306,29 +183,18 @@
                 </p>
 
 
-                <div class="flex items-center justify-between gap-4 bg-red-50 rounded-lg px-4 py-3">
-
-                    <div class="min-w-0">
-
-                        <p class="text-sm font-medium text-red-700">
-                            JO-1039 · Liza Cruz
-                        </p>
-
-                        <p class="text-xs text-red-700/80 mt-0.5">
-                            Supervisor remark: missing problem details
-                        </p>
-
-                    </div>
-
-
-                    <a href="#"
-                       class="shrink-0 flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm hover:bg-gray-50 transition">
-
-                        <i class="ti ti-refresh text-base"></i>
-                        Revise
-
-                    </a>
-
+                <div class="flex flex-col gap-2">
+                    @forelse ($needsRevisionJobOrders as $jobOrder)
+                        <div class="flex items-center justify-between gap-4 rounded-lg bg-red-50 px-4 py-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-red-700">JO-{{ $jobOrder->job_order_id }} · {{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</p>
+                                <p class="mt-0.5 text-xs text-red-700/80">{{ $jobOrder->remarks ?: 'Review and update this job order.' }}</p>
+                            </div>
+                            <a href="{{ route('job-orders.show', $jobOrder) }}" class="shrink-0 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-sm text-red-700 transition hover:bg-red-100"><i class="ti ti-refresh text-base"></i> Revise</a>
+                        </div>
+                    @empty
+                        <p class="rounded-lg border border-dashed border-red-200 p-5 text-center text-sm text-gray-500">No job orders need revision.</p>
+                    @endforelse
                 </div>
 
             </div>

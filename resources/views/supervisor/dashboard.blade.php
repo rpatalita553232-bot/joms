@@ -25,128 +25,20 @@
 
 
             <!-- Stats -->
-<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-
-    {{-- Pending Approval --}}
-    <div
-        x-data="{ period: 'total' }"
-        class="bg-gray-50 rounded-lg p-4"
-    >
-
-        <div class="flex items-start justify-between gap-2">
-
-            <p class="text-[13px] text-gray-500 mb-1.5">
-                Pending approval
-            </p>
-
-            <select
-                x-model="period"
-                class="bg-transparent border-0 p-0 pr-5
-                       text-[11px] text-gray-500
-                       focus:ring-0 focus:outline-none
-                       cursor-pointer"
-            >
-                <option value="total">Total</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="year">Year</option>
-            </select>
-
-        </div>
-
-        <p
-            class="text-2xl font-medium"
-            x-text="
-                period === 'total' ? '5' :
-                period === 'week' ? '3' :
-                period === 'month' ? '12' :
-                '48'
-            "
-        ></p>
-
-    </div>
-
-
-    {{-- Approved --}}
-    <div
-        x-data="{ period: 'total' }"
-        class="bg-gray-50 rounded-lg p-4"
-    >
-
-        <div class="flex items-start justify-between gap-2">
-
-            <p class="text-[13px] text-gray-500 mb-1.5">
-                Approved
-            </p>
-
-            <select
-                x-model="period"
-                class="bg-transparent border-0 p-0 pr-5
-                       text-[11px] text-gray-500
-                       focus:ring-0 focus:outline-none
-                       cursor-pointer"
-            >
-                <option value="total">Total</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="year">Year</option>
-            </select>
-
-        </div>
-
-        <p
-            class="text-2xl font-medium"
-            x-text="
-                period === 'total' ? '3' :
-                period === 'week' ? '8' :
-                period === 'month' ? '24' :
-                '97'
-            "
-        ></p>
-
-    </div>
-
-
-    {{-- Rejected --}}
-    <div
-        x-data="{ period: 'total' }"
-        class="bg-gray-50 rounded-lg p-4"
-    >
-
-        <div class="flex items-start justify-between gap-2">
-
-            <p class="text-[13px] text-gray-500 mb-1.5">
-                Rejected
-            </p>
-
-            <select
-                x-model="period"
-                class="bg-transparent border-0 p-0 pr-5
-                       text-[11px] text-gray-500
-                       focus:ring-0 focus:outline-none
-                       cursor-pointer"
-            >
-                <option value="total">Total</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="year">Year</option>
-            </select>
-
-        </div>
-
-        <p
-            class="text-2xl font-medium"
-            x-text="
-                period === 'total' ? '1' :
-                period === 'week' ? '2' :
-                period === 'month' ? '7' :
-                '31'
-            "
-        ></p>
-
-    </div>
-
-</div>
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-[13px] text-gray-500 mb-1.5">Pending approval</p>
+                    <p class="text-2xl font-medium">{{ $pendingCount }}</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-[13px] text-gray-500 mb-1.5">In progress</p>
+                    <p class="text-2xl font-medium">{{ $inProgressCount }}</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-[13px] text-gray-500 mb-1.5">Completed this month</p>
+                    <p class="text-2xl font-medium">{{ $completedThisMonthCount }}</p>
+                </div>
+            </div>
 
 
             <!-- Pending Approvals -->
@@ -158,99 +50,17 @@
 
 
                 <div class="flex flex-col gap-2">
-
-                    <!-- Job Order 1 -->
-                    <div class="flex items-center justify-between gap-4 border border-gray-200 rounded-lg px-4 py-3">
-
-                        <div class="min-w-0">
-
-                            <p class="text-sm font-medium">
-                                JO-1045 · Juan Dela Cruz
-                            </p>
-
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                Toyota Vios · Brake repair · Submitted by John Cuyos
-                            </p>
-
+                    @forelse ($pendingJobOrders as $jobOrder)
+                        <div class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 px-4 py-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium">JO-{{ $jobOrder->job_order_id }} · {{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</p>
+                                <p class="mt-0.5 text-xs text-gray-500">{{ $jobOrder->vehicle?->make ?? 'Unknown vehicle' }} {{ $jobOrder->vehicle?->engine_model ?? '' }} · {{ $jobOrder->services->first()?->job_desc ?? 'Service not set' }} · Submitted by {{ $jobOrder->creator?->name ?? 'Unknown user' }}</p>
+                            </div>
+                            <a href="{{ route('supervisor.AJO', ['search' => $jobOrder->job_order_id]) }}" class="inline-flex shrink-0 items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="ti ti-eye"></i> Review</a>
                         </div>
-
-
-                        <div class="flex gap-1.5 shrink-0">
-
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                                <i class="ti ti-eye"></i>
-                                Review
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Job Order 2 -->
-                    <div class="flex items-center justify-between gap-4 border border-gray-200 rounded-lg px-4 py-3">
-
-                        <div class="min-w-0">
-
-                            <p class="text-sm font-medium">
-                                JO-1044 · Ana Reyes
-                            </p>
-
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                Honda Civic · Oil change · Submitted by Sharwen Lopez
-                            </p>
-
-                        </div>
-
-
-                        <div class="flex gap-1.5 shrink-0">
-
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                                <i class="ti ti-eye"></i>
-                                Review
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Job Order 3 -->
-                    <div class="flex items-center justify-between gap-4 border border-gray-200 rounded-lg px-4 py-3">
-
-                        <div class="min-w-0">
-
-                            <p class="text-sm font-medium">
-                                JO-1043 · Mark Santos
-                            </p>
-
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                Ford Ranger · Engine check · Submitted by John Cuyos
-                            </p>
-
-                        </div>
-
-
-                        <div class="flex gap-1.5 shrink-0">
-
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                                <i class="ti ti-eye"></i>
-                                Review
-                            </button>
-
-                        </div>
-
-                    </div>
-
+                    @empty
+                        <p class="rounded-lg border border-dashed border-gray-200 p-5 text-center text-sm text-gray-500">No job orders are awaiting review.</p>
+                    @endforelse
                 </div>
 
             </div>
@@ -295,54 +105,22 @@
 
                         <tbody>
 
-                            <tr class="border-b border-gray-100">
-
-                                <td class="py-2.5 pr-2">
-                                    JO-1039
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-
-                                    <span class="bg-red-50 text-red-700 text-xs px-2.5 py-1 rounded-md">
-                                        Rejected
-                                    </span>
-
-                                </td>
-
-                                <td class="py-2.5 pr-2 text-gray-500">
-                                    Missing problem details
-                                </td>
-
-                                <td class="py-2.5">
-                                    Sep 9, 3:14 pm
-                                </td>
-
-                            </tr>
-
-
-                            <tr>
-
-                                <td class="py-2.5 pr-2">
-                                    JO-1038
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-
-                                    <span class="bg-green-50 text-green-700 text-xs px-2.5 py-1 rounded-md">
-                                        Approved
-                                    </span>
-
-                                </td>
-
-                                <td class="py-2.5 pr-2 text-gray-500">
-                                    &mdash;
-                                </td>
-
-                                <td class="py-2.5">
-                                    Sep 9, 11:02 am
-                                </td>
-
-                            </tr>
+                            @forelse ($recentApprovals as $approval)
+                                <tr class="border-b border-gray-100 last:border-0">
+                                    <td class="py-2.5 pr-2"><a href="{{ route('supervisor.AJO', ['search' => $approval->job_order_id]) }}" class="hover:underline">JO-{{ $approval->job_order_id }}</a></td>
+                                    <td class="py-2.5 pr-2">
+                                        <span @class([
+                                            'rounded-md px-2.5 py-1 text-xs',
+                                            'bg-red-50 text-red-700' => $approval->status === 'rejected',
+                                            'bg-green-50 text-green-700' => $approval->status === 'approved',
+                                        ])>{{ ucfirst($approval->status) }}</span>
+                                    </td>
+                                    <td class="py-2.5 pr-2 text-gray-500">{{ $approval->remarks ?: '—' }}</td>
+                                    <td class="py-2.5">{{ $approval->action_date ? \Illuminate\Support\Facades\Date::parse($approval->action_date)->format('M d, g:i a') : 'N/A' }}</td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="4" class="py-6 text-center text-sm text-gray-500">No approval history yet.</td></tr>
+                            @endforelse
 
                         </tbody>
 

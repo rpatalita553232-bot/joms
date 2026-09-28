@@ -23,7 +23,7 @@
                 </div>
 
 
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('supervisor.approval-history') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -35,6 +35,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search Job Orders..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -47,10 +49,7 @@
 
 
                     {{-- Filter --}}
-                    <div
-                        class="relative"
-                        x-data="{ open: false }"
-                    >
+                    <div class="hidden relative" x-data="{ open: false }">
 
                         <button
                             type="button"
@@ -144,7 +143,9 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                    <a href="{{ route('supervisor.approval-history') }}" class="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Reset</a>
+                </form>
 
 
                 <!-- History -->
@@ -197,6 +198,26 @@
 
 
                             <tbody>
+                                @forelse ($approvals as $approval)
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-5 py-3 font-medium"><a href="{{ route('job-orders.show', $approval->jobOrder) }}" class="hover:underline">JO-{{ $approval->job_order_id }}</a></td>
+                                        <td class="px-5 py-3">{{ trim(($approval->jobOrder?->customer?->first_name ?? '').' '.($approval->jobOrder?->customer?->middle_name ?? '').' '.($approval->jobOrder?->customer?->last_name ?? '')) ?: 'Unknown customer' }}</td>
+                                        <td class="px-5 py-3">
+                                            <span @class([
+                                                'rounded-md px-2.5 py-1 text-xs',
+                                                'bg-red-50 text-red-700' => $approval->status === 'rejected',
+                                                'bg-green-50 text-green-700' => $approval->status === 'approved',
+                                            ])>{{ ucfirst($approval->status) }}</span>
+                                        </td>
+                                        <td class="px-5 py-3 text-gray-500">{{ $approval->remarks ?: '—' }}</td>
+                                        <td class="px-5 py-3 text-gray-500">{{ $approval->action_date ? \Illuminate\Support\Facades\Date::parse($approval->action_date)->format('M d, Y g:i a') : 'N/A' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-500">No approval records match this search.</td></tr>
+                                @endforelse
+                            </tbody>
+
+                            <tbody class="hidden">
 
 
                                 <tr class="border-b border-gray-100 hover:bg-gray-50">

@@ -34,7 +34,7 @@
 
 
                 <!-- Search + Filter -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('admin.vehicles') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -46,6 +46,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search vehicle..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -158,7 +160,8 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                </form>
 
 
                 <!-- Vehicle Table -->
@@ -171,7 +174,7 @@
                         </p>
 
                         <p class="text-xs text-gray-500 mt-1">
-                            231 registered vehicles
+                            {{ $vehicles->count() }} registered vehicles
                         </p>
 
                     </div>
@@ -197,7 +200,7 @@
                                     </th>
 
                                     <th class="font-normal px-5 py-3">
-                                        Year
+                                        Date added
                                     </th>
 
                                     <th class="font-normal px-5 py-3 text-right">
@@ -209,195 +212,29 @@
 
 
                             <tbody>
-
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-                                        <p class="font-medium">Toyota Vios</p>
-                                        <p class="text-xs text-gray-500">Sedan</p>
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        ABC 1234
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        Juan Dela Cruz
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        2022
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center justify-end gap-2">
-
-                                            {{-- Edit --}}
-                                            <a
-                                                href="#"
-                                                class="inline-flex items-center gap-1.5 rounded-lg
-                                                    border border-gray-200 px-2.5 py-1.5
-                                                    text-xs font-medium text-gray-600
-                                                    transition hover:bg-gray-50 hover:text-gray-900"
-                                            >
-                                                <i class="ti ti-edit text-sm"></i>
-                                                Edit
-                                            </a>
-
-
-                                            {{-- Delete --}}
-                                            <form
-                                                method="POST"
-                                                action="#"
-                                                onsubmit="return confirm('Are you sure you want to delete this customer?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg
-                                                        border border-gray-200 px-2.5 py-1.5
-                                                        text-xs font-medium text-red-600
-                                                        transition hover:bg-red-50 hover:border-red-200"
-                                                >
-                                                    <i class="ti ti-trash text-sm"></i>
-                                                    Delete
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-                                        <p class="font-medium">Honda Civic</p>
-                                        <p class="text-xs text-gray-500">Sedan</p>
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        XYZ 5678
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        Ana Reyes
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        2021
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center justify-end gap-2">
-
-                                            {{-- Edit --}}
-                                            <a
-                                                href="#"
-                                                class="inline-flex items-center gap-1.5 rounded-lg
-                                                    border border-gray-200 px-2.5 py-1.5
-                                                    text-xs font-medium text-gray-600
-                                                    transition hover:bg-gray-50 hover:text-gray-900"
-                                            >
-                                                <i class="ti ti-edit text-sm"></i>
-                                                Edit
-                                            </a>
-
-
-                                            {{-- Delete --}}
-                                            <form
-                                                method="POST"
-                                                action="#"
-                                                onsubmit="return confirm('Are you sure you want to delete this customer?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg
-                                                        border border-gray-200 px-2.5 py-1.5
-                                                        text-xs font-medium text-red-600
-                                                        transition hover:bg-red-50 hover:border-red-200"
-                                                >
-                                                    <i class="ti ti-trash text-sm"></i>
-                                                    Delete
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr class="hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-                                        <p class="font-medium">Ford Ranger</p>
-                                        <p class="text-xs text-gray-500">Pickup</p>
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        DEF 9012
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        Mark Santos
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        2023
-                                    </td>
-
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center justify-end gap-2">
-
-                                            {{-- Edit --}}
-                                            <a
-                                                href="#"
-                                                class="inline-flex items-center gap-1.5 rounded-lg
-                                                    border border-gray-200 px-2.5 py-1.5
-                                                    text-xs font-medium text-gray-600
-                                                    transition hover:bg-gray-50 hover:text-gray-900"
-                                            >
-                                                <i class="ti ti-edit text-sm"></i>
-                                                Edit
-                                            </a>
-
-
-                                            {{-- Delete --}}
-                                            <form
-                                                method="POST"
-                                                action="#"
-                                                onsubmit="return confirm('Are you sure you want to delete this customer?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg
-                                                        border border-gray-200 px-2.5 py-1.5
-                                                        text-xs font-medium text-red-600
-                                                        transition hover:bg-red-50 hover:border-red-200"
-                                                >
-                                                    <i class="ti ti-trash text-sm"></i>
-                                                    Delete
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
+                                @forelse ($vehicles as $vehicle)
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-5 py-3">
+                                            <p class="font-medium">{{ $vehicle->make }} {{ $vehicle->engine_model }}</p>
+                                            <p class="text-xs text-gray-500">Vehicle #{{ $vehicle->vehicle_id }}</p>
+                                        </td>
+                                        <td class="px-5 py-3">{{ $vehicle->plate_number }}</td>
+                                        <td class="px-5 py-3 text-gray-600">{{ trim(($vehicle->customer?->first_name ?? '').' '.($vehicle->customer?->middle_name ?? '').' '.($vehicle->customer?->last_name ?? '')) ?: 'Unknown customer' }}</td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $vehicle->created_at?->format('M d, Y') ?? 'N/A' }}</td>
+                                        <td class="px-5 py-3">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"><i class="ti ti-edit text-sm"></i> Edit</a>
+                                                <form method="POST" action="{{ route('admin.vehicles.destroy', $vehicle) }}" onsubmit="return confirm('Are you sure you want to delete this vehicle?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 hover:border-red-200"><i class="ti ti-trash text-sm"></i> Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-500">No vehicles found.</td></tr>
+                                @endforelse
                             </tbody>
 
                         </table>

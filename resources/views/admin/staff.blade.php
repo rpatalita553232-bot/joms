@@ -34,7 +34,7 @@
 
 
                 <!-- Search + Filter -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('admin.staff') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -46,6 +46,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search staff..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -158,7 +160,8 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                </form>
 
 
                 <!-- Staff -->
@@ -171,7 +174,7 @@
                         </p>
 
                         <p class="text-xs text-gray-500 mt-1">
-                            6 active staff members
+                            {{ $staff->count() }} staff members
                         </p>
 
                     </div>
@@ -206,141 +209,39 @@
 
 
                             <tbody>
-
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-
-                                        <div class="flex items-center gap-3">
-
-                                            <div class="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center">
-                                                <i class="ti ti-user text-gray-500"></i>
+                                @forelse ($staff as $member)
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-5 py-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100"><i class="ti ti-user text-gray-500"></i></div>
+                                                <div>
+                                                    <p class="font-medium">{{ trim($member->staff_first.' '.($member->staff_middle ?? '').' '.$member->staff_last) }}</p>
+                                                    <p class="text-xs text-gray-500">Staff #{{ $member->staff_id }}</p>
+                                                </div>
                                             </div>
-
-                                            <div>
-                                                <p class="font-medium">
-                                                    Bernie S. Aranda
-                                                </p>
-
-                                                <p class="text-xs text-gray-500">
-                                                    Staff #001
-                                                </p>
+                                        </td>
+                                        <td class="px-5 py-3 text-gray-600">{{ $member->user?->email ?? 'No login account' }}</td>
+                                        <td class="px-5 py-3">
+                                            @if ($member->user)
+                                                <span class="rounded-md bg-blue-50 px-2.5 py-1 text-xs text-blue-700">{{ ucfirst($member->user->role) }}</span>
+                                            @else
+                                                <span class="rounded-md bg-gray-100 px-2.5 py-1 text-xs text-gray-600">No role</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-5 py-3">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a href="{{ route('admin.staff.edit', $member) }}" class="text-gray-500 hover:text-gray-900" aria-label="Edit staff"><i class="ti ti-edit"></i></a>
+                                                <form method="POST" action="{{ route('admin.staff.destroy', $member) }}" onsubmit="return confirm('Delete this staff member?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-500 hover:text-red-700" aria-label="Delete staff"><i class="ti ti-trash"></i></button>
+                                                </form>
                                             </div>
-
-                                        </div>
-
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        bernie@example.com
-                                    </td>
-
-                                    <td class="px-5 py-3">
-
-                                        <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-md">
-                                            Supervisor
-                                        </span>
-
-                                    </td>
-
-                                    <td class="px-5 py-3 text-right">
-                                        <a href="#" class="text-gray-500 hover:text-gray-900">
-                                            <i class="ti ti-chevron-right"></i>
-                                        </a>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-
-                                        <div class="flex items-center gap-3">
-
-                                            <div class="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center">
-                                                <i class="ti ti-user text-gray-500"></i>
-                                            </div>
-
-                                            <div>
-                                                <p class="font-medium">
-                                                    Maria
-                                                </p>
-
-                                                <p class="text-xs text-gray-500">
-                                                    Staff #002
-                                                </p>
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        maria@example.com
-                                    </td>
-
-                                    <td class="px-5 py-3">
-
-                                        <span class="bg-purple-50 text-red-700 text-xs px-2.5 py-1 rounded-md">
-                                            Admin
-                                        </span>
-
-                                    </td>
-
-                                    <td class="px-5 py-3 text-right">
-                                        <a href="#" class="text-gray-500 hover:text-gray-900">
-                                            <i class="ti ti-chevron-right"></i>
-                                        </a>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr class="hover:bg-gray-50">
-
-                                    <td class="px-5 py-3">
-
-                                        <div class="flex items-center gap-3">
-
-                                            <div class="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center">
-                                                <i class="ti ti-user text-gray-500"></i>
-                                            </div>
-
-                                            <div>
-                                                <p class="font-medium">
-                                                    Adili
-                                                </p>
-
-                                                <p class="text-xs text-gray-500">
-                                                    Staff #003
-                                                </p>
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-                                    <td class="px-5 py-3 text-gray-600">
-                                        adili@example.com
-                                    </td>
-
-                                    <td class="px-5 py-3">
-
-                                        <span class="bg-gray-100 text-green-700 text-xs px-2.5 py-1 rounded-md">
-                                            Mechanic
-                                        </span>
-
-                                    </td>
-
-                                    <td class="px-5 py-3 text-right">
-                                        <a href="#" class="text-gray-500 hover:text-gray-900">
-                                            <i class="ti ti-chevron-right"></i>
-                                        </a>
-                                    </td>
-
-                                </tr>
-
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="4" class="px-5 py-8 text-center text-sm text-gray-500">No staff members found.</td></tr>
+                                @endforelse
                             </tbody>
 
                         </table>

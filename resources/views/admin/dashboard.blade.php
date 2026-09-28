@@ -31,7 +31,7 @@
                     </p>
 
                     <p class="text-2xl font-medium">
-                        184
+                        {{ $customerCount }}
                     </p>
                 </div>
 
@@ -42,7 +42,7 @@
                     </p>
 
                     <p class="text-2xl font-medium">
-                        231
+                        {{ $vehicleCount }}
                     </p>
                 </div>
 
@@ -53,105 +53,14 @@
                     </p>
 
                     <p class="text-2xl font-medium">
-                        6
+                        {{ $staffCount }}
                     </p>
                 </div>
 
 
-                <!-- Job Orders Period -->
-                <div
-                    class="bg-gray-50 rounded-lg p-4"
-                    x-data="{
-                        period: 'month',
-                        counts: {
-                            week: 12,
-                            month: 42,
-                            year: 386
-                        }
-                    }"
-                >
-                    <div class="flex items-start justify-between gap-2">
-
-                        <div>
-                            <p class="text-[13px] text-gray-500 mb-1.5">
-                                Job orders
-                            </p>
-
-                            <p
-                                class="text-2xl font-medium"
-                                x-text="counts[period]"
-                            >
-                                42
-                            </p>
-                        </div>
-
-                        <!-- Period Selector -->
-                        <div class="relative" x-data="{ open: false }">
-
-                            <button
-                                type="button"
-                                @click="open = !open"
-                                @click.outside="open = false"
-                                class="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition"
-                            >
-                                <span
-                                    x-text="
-                                        period === 'week'
-                                            ? 'This week'
-                                            : period === 'month'
-                                                ? 'This month'
-                                                : 'This year'
-                                    "
-                                >
-                                    This month
-                                </span>
-
-                                <i
-                                    class="ti ti-chevron-down text-sm transition-transform"
-                                    :class="{ 'rotate-180': open }"
-                                ></i>
-                            </button>
-
-
-                            <!-- Dropdown -->
-                            <div
-                                x-show="open"
-                                x-transition
-                                class="absolute right-0 z-20 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-sm p-1"
-                            >
-
-                                <button
-                                    type="button"
-                                    @click="period = 'week'; open = false"
-                                    class="w-full text-left px-3 py-2 text-xs rounded-md hover:bg-gray-50 transition"
-                                    :class="period === 'week' ? 'bg-gray-50 text-gray-900' : 'text-gray-500'"
-                                >
-                                    This week
-                                </button>
-
-                                <button
-                                    type="button"
-                                    @click="period = 'month'; open = false"
-                                    class="w-full text-left px-3 py-2 text-xs rounded-md hover:bg-gray-50 transition"
-                                    :class="period === 'month' ? 'bg-gray-50 text-gray-900' : 'text-gray-500'"
-                                >
-                                    This month
-                                </button>
-
-                                <button
-                                    type="button"
-                                    @click="period = 'year'; open = false"
-                                    class="w-full text-left px-3 py-2 text-xs rounded-md hover:bg-gray-50 transition"
-                                    :class="period === 'year' ? 'bg-gray-50 text-gray-900' : 'text-gray-500'"
-                                >
-                                    This year
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-[13px] text-gray-500 mb-1.5">Services offered</p>
+                    <p class="text-2xl font-medium">{{ $serviceCount }}</p>
                 </div>
 
             </div>
@@ -196,17 +105,7 @@
                         Recent job orders
                     </p>
 
-                    <div class="relative">
-
-                        <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-
-                        <input
-                            type="text"
-                            placeholder="Search job orders"
-                            class="w-56 pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
-                        >
-
-                    </div>
+                    <a href="{{ route('admin.job-orders') }}" class="text-sm text-gray-600 hover:text-gray-900">View all</a>
 
                 </div>
 
@@ -243,106 +142,26 @@
 
 
                         <tbody>
-
-                            <tr class="border-b border-gray-100">
-                                <td class="py-2.5 pr-2">
-                                    JO-1042
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Juan Dela Cruz
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Toyota Vios
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Sep 12
-                                </td>
-
-                                <td class="py-2.5">
-                                    <span class="bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-md">
-                                        Pending
-                                    </span>
-                                </td>
-                            </tr>
-
-
-                            <tr class="border-b border-gray-100">
-                                <td class="py-2.5 pr-2">
-                                    JO-1041
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Ana Reyes
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Honda Civic
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Sep 11
-                                </td>
-
-                                <td class="py-2.5">
-                                    <span class="bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-md">
-                                        Pending
-                                    </span>
-                                </td>
-                            </tr>
-
-
-                            <tr class="border-b border-gray-100">
-                                <td class="py-2.5 pr-2">
-                                    JO-1040
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Mark Santos
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Ford Ranger
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Sep 10
-                                </td>
-
-                                <td class="py-2.5">
-                                    <span class="bg-green-50 text-green-700 text-xs px-2.5 py-1 rounded-md">
-                                        Approved
-                                    </span>
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td class="py-2.5 pr-2">
-                                    JO-1039
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Liza Cruz
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Suzuki Ertiga
-                                </td>
-
-                                <td class="py-2.5 pr-2">
-                                    Sep 9
-                                </td>
-
-                                <td class="py-2.5">
-                                    <span class="bg-red-50 text-red-700 text-xs px-2.5 py-1 rounded-md">
-                                        Rejected
-                                    </span>
-                                </td>
-                            </tr>
-
+                            @forelse ($recentJobOrders as $jobOrder)
+                                <tr class="border-b border-gray-100 last:border-0">
+                                    <td class="py-2.5 pr-2"><a href="{{ route('job-orders.show', $jobOrder) }}" class="font-medium hover:underline">JO-{{ $jobOrder->job_order_id }}</a></td>
+                                    <td class="py-2.5 pr-2">{{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</td>
+                                    <td class="py-2.5 pr-2">{{ $jobOrder->vehicle?->plate_number ?? 'N/A' }}</td>
+                                    <td class="py-2.5 pr-2">{{ $jobOrder->date_issued ? \Illuminate\Support\Facades\Date::parse($jobOrder->date_issued)->format('M d, Y') : 'N/A' }}</td>
+                                    <td class="py-2.5">
+                                        <span @class([
+                                            'rounded-md px-2.5 py-1 text-xs',
+                                            'bg-yellow-50 text-yellow-700' => $jobOrder->status === 'pending',
+                                            'bg-green-50 text-green-700' => $jobOrder->status === 'approved',
+                                            'bg-red-50 text-red-700' => $jobOrder->status === 'rejected',
+                                            'bg-blue-50 text-blue-700' => $jobOrder->status === 'in_progress',
+                                            'bg-gray-100 text-gray-700' => $jobOrder->status === 'completed',
+                                        ])>{{ ucfirst(str_replace('_', ' ', $jobOrder->status)) }}</span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="5" class="py-6 text-center text-sm text-gray-500">No job orders have been created yet.</td></tr>
+                            @endforelse
                         </tbody>
 
                     </table>

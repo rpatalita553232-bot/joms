@@ -28,7 +28,7 @@
                 {{-- Form --}}
                 <form
                     method="POST"
-                    action="#"
+                    action="{{ route('mechanic.job-orders.store') }}"
                     class="max-w-4xl flex flex-col gap-5"
                 >
 
@@ -58,41 +58,29 @@
                             <div>
 
                                 <label
-                                    for="customer"
+                                    for="cust_id"
                                     class="block text-sm font-medium text-gray-700 mb-1.5"
                                 >
                                     Customer
                                 </label>
 
                                 <select
-                                    id="customer"
-                                    name="customer"
+                                    id="cust_id"
+                                    name="cust_id"
                                     class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg
                                            bg-white focus:outline-none focus:ring-2
                                            focus:ring-blue-100 focus:border-blue-300"
                                 >
 
-                                    <option value="">
-                                        Select customer
-                                    </option>
-
-                                    <option>
-                                        Juan Dela Cruz
-                                    </option>
-
-                                    <option>
-                                        Ana Reyes
-                                    </option>
-
-                                    <option>
-                                        Mark Santos
-                                    </option>
-
-                                    <option>
-                                        Liza Cruz
-                                    </option>
+                                    <option value="">Select customer</option>
+                                    @foreach ($customers as $customer)
+                                        <option value="{{ $customer->cust_id }}" @selected((string) old('cust_id') === (string) $customer->cust_id)>
+                                            {{ trim($customer->first_name.' '.($customer->middle_name ?? '').' '.$customer->last_name) }}
+                                        </option>
+                                    @endforeach
 
                                 </select>
+                                <x-input-error :messages="$errors->get('cust_id')" class="mt-2" />
 
                             </div>
 
@@ -101,41 +89,29 @@
                             <div>
 
                                 <label
-                                    for="vehicle"
+                                    for="vehicle_id"
                                     class="block text-sm font-medium text-gray-700 mb-1.5"
                                 >
                                     Vehicle
                                 </label>
 
                                 <select
-                                    id="vehicle"
-                                    name="vehicle"
+                                    id="vehicle_id"
+                                    name="vehicle_id"
                                     class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg
                                            bg-white focus:outline-none focus:ring-2
                                            focus:ring-blue-100 focus:border-blue-300"
                                 >
 
-                                    <option value="">
-                                        Select vehicle
-                                    </option>
-
-                                    <option>
-                                        Toyota Vios
-                                    </option>
-
-                                    <option>
-                                        Honda Civic
-                                    </option>
-
-                                    <option>
-                                        Ford Ranger
-                                    </option>
-
-                                    <option>
-                                        Suzuki Ertiga
-                                    </option>
+                                    <option value="">Select vehicle</option>
+                                    @foreach ($vehicles as $vehicle)
+                                        <option value="{{ $vehicle->vehicle_id }}" @selected((string) old('vehicle_id') === (string) $vehicle->vehicle_id)>
+                                            {{ $vehicle->customer?->first_name }} {{ $vehicle->customer?->last_name }} · {{ $vehicle->plate_number }} · {{ $vehicle->make }} {{ $vehicle->engine_model }}
+                                        </option>
+                                    @endforeach
 
                                 </select>
+                                <x-input-error :messages="$errors->get('vehicle_id')" class="mt-2" />
 
                             </div>
 
@@ -167,41 +143,29 @@
                             <div>
 
                                 <label
-                                    for="service"
+                                    for="service_id"
                                     class="block text-sm font-medium text-gray-700 mb-1.5"
                                 >
                                     Service
                                 </label>
 
                                 <select
-                                    id="service"
-                                    name="service"
+                                    id="service_id"
+                                    name="service_id"
                                     class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg
                                            bg-white focus:outline-none focus:ring-2
                                            focus:ring-blue-100 focus:border-blue-300"
                                 >
 
-                                    <option value="">
-                                        Select service
-                                    </option>
-
-                                    <option>
-                                        Brake repair
-                                    </option>
-
-                                    <option>
-                                        Oil change
-                                    </option>
-
-                                    <option>
-                                        Engine check
-                                    </option>
-
-                                    <option>
-                                        Suspension check
-                                    </option>
+                                    <option value="">Select service</option>
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->service_id }}" @selected((string) old('service_id') === (string) $service->service_id)>
+                                            {{ $service->job_desc }} · ₱{{ number_format((float) $service->price, 2) }}
+                                        </option>
+                                    @endforeach
 
                                 </select>
+                                <x-input-error :messages="$errors->get('service_id')" class="mt-2" />
 
                             </div>
 
@@ -210,21 +174,22 @@
                             <div>
 
                                 <label
-                                    for="problem"
+                                    for="problem_description"
                                     class="block text-sm font-medium text-gray-700 mb-1.5"
                                 >
                                     Problem description
                                 </label>
 
                                 <textarea
-                                    id="problem"
-                                    name="problem"
+                                    id="problem_description"
+                                    name="problem_description"
                                     rows="4"
                                     placeholder="Describe the vehicle problem..."
                                     class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg
                                            resize-none focus:outline-none focus:ring-2
                                            focus:ring-blue-100 focus:border-blue-300"
-                                ></textarea>
+                                >{{ old('problem_description') }}</textarea>
+                                <x-input-error :messages="$errors->get('problem_description')" class="mt-2" />
 
                             </div>
 
@@ -233,24 +198,31 @@
                             <div>
 
                                 <label
-                                    for="findings"
+                                    for="remarks"
                                     class="block text-sm font-medium text-gray-700 mb-1.5"
                                 >
                                     Initial findings
                                 </label>
 
                                 <textarea
-                                    id="findings"
-                                    name="findings"
+                                    id="remarks"
+                                    name="remarks"
                                     rows="4"
-                                    placeholder="Enter your initial findings..."
+                                    placeholder="Enter any initial findings..."
                                     class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg
                                            resize-none focus:outline-none focus:ring-2
                                            focus:ring-blue-100 focus:border-blue-300"
-                                ></textarea>
-
+                                >{{ old('remarks') }}</textarea>
+                                <x-input-error :messages="$errors->get('remarks')" class="mt-2" />
                             </div>
 
+                            <div>
+                                <label for="expected_cmpl_date" class="block text-sm font-medium text-gray-700 mb-1.5">Expected completion date</label>
+                                <input id="expected_cmpl_date" name="expected_cmpl_date" type="date" min="{{ now()->toDateString() }}" value="{{ old('expected_cmpl_date') }}" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300">
+                                <x-input-error :messages="$errors->get('expected_cmpl_date')" class="mt-2" />
+                            </div>
+
+                            </div>
                         </div>
 
                     </div>

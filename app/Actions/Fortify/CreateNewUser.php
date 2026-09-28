@@ -32,10 +32,18 @@ class CreateNewUser implements CreatesNewUsers
         ])->validate();
 
         return DB::transaction(function () use ($input) {
+            $nameParts = preg_split('/\s+/', trim($input['name']), -1, PREG_SPLIT_NO_EMPTY);
+            $firstName = array_shift($nameParts) ?: $input['name'];
+            $lastName = count($nameParts) > 0 ? array_pop($nameParts) : $firstName;
+
             $user = User::create([
                 'name' => $input['name'],
+                'first_name' => $firstName,
+                'middle_name' => count($nameParts) > 0 ? implode(' ', $nameParts) : null,
+                'last_name' => $lastName,
                 'email' => $input['email'],
                 'password' => $input['password'],
+                'role' => 'mechanic',
             ]);
 
             $this->createTeam->handle($user, $user->name."'s Team", isPersonal: true);

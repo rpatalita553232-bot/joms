@@ -26,7 +26,7 @@
                         <i class="ti ti-chevron-right text-xs"></i>
 
                         <span class="text-gray-600">
-                            Add service
+                            {{ isset($service) ? 'Edit service' : 'Add service' }}
                         </span>
 
                     </div>
@@ -45,11 +45,14 @@
                 {{-- Form --}}
                 <form
                     method="POST"
-                    action="#"
+                    action="{{ isset($service) ? route('admin.services.update', $service) : route('admin.services.store') }}"
                     class="max-w-3xl"
                 >
 
                     @csrf
+                    @isset($service)
+                        @method('PUT')
+                    @endisset
 
 
                     {{-- Service Information --}}
@@ -77,7 +80,7 @@
                                 <div>
 
                                     <label
-                                        for="name"
+                                        for="job_desc"
                                         class="block text-sm font-medium text-gray-700"
                                     >
                                         Service name
@@ -88,10 +91,10 @@
                                         <i class="ti ti-tool absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
 
                                         <input
-                                            id="name"
+                                            id="job_desc"
                                             type="text"
-                                            name="name"
-                                            value="{{ old('name') }}"
+                                            name="job_desc"
+                                            value="{{ old('job_desc', $service->job_desc ?? '') }}"
                                             placeholder="e.g. Brake repair"
                                             required
                                             class="block w-full rounded-lg border border-gray-200
@@ -103,38 +106,10 @@
 
                                     </div>
 
-                                    @error('name')
-                                        <p class="mt-1.5 text-xs text-red-600">
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
+                                    <x-input-error :messages="$errors->get('job_desc')" class="mt-2" />
 
                                 </div>
 
-
-                                {{-- Description --}}
-                                <div>
-
-                                    <label
-                                        for="description"
-                                        class="block text-sm font-medium text-gray-700"
-                                    >
-                                        Description
-                                    </label>
-
-                                    <textarea
-                                        id="description"
-                                        name="description"
-                                        rows="5"
-                                        placeholder="Describe what this service covers..."
-                                        class="mt-1.5 block w-full resize-none rounded-lg
-                                               border border-gray-200 px-3 py-2.5 text-sm
-                                               placeholder:text-gray-400
-                                               focus:border-gray-400 focus:outline-none
-                                               focus:ring-2 focus:ring-gray-100"
-                                    >{{ old('description') }}</textarea>
-
-                                </div>
 
                                 {{-- Price --}}
                                 <div>
@@ -156,9 +131,9 @@
                                             id="price"
                                             type="number"
                                             name="price"
-                                            value="{{ old('price') }}"
+                                            value="{{ old('price', $service->price ?? '') }}"
                                             placeholder="0.00"
-                                            min="0"
+                                            min="0.01"
                                             step="0.01"
                                             required
                                             class="block w-full rounded-lg border border-gray-200
@@ -170,11 +145,7 @@
 
                                     </div>
 
-                                    @error('price')
-                                        <p class="mt-1.5 text-xs text-red-600">
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
+                                    <x-input-error :messages="$errors->get('price')" class="mt-2" />
 
                                 </div>
 
@@ -204,7 +175,7 @@
                                    font-medium text-white hover:bg-gray-800"
                         >
                             <i class="ti ti-plus"></i>
-                            Add service
+                            {{ isset($service) ? 'Save changes' : 'Add service' }}
                         </button>
 
                     </div>

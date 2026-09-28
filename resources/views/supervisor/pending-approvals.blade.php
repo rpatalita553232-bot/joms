@@ -25,14 +25,14 @@
 
                     <div class="flex items-center gap-2 bg-amber-50 text-amber-700 rounded-lg px-3 py-2 text-sm">
                         <i class="ti ti-clock"></i>
-                        3 pending
+                        {{ $jobOrders->count() }} pending
                     </div>
 
                 </div>
 
 
                 <!-- Search + Filter -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <form method="GET" action="{{ route('supervisor.pending-approvals') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- Search --}}
                     <div class="relative max-w-sm flex-1 sm:max-w-sm">
@@ -44,6 +44,8 @@
 
                         <input
                             type="text"
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Search Job Orders..."
                             class="w-full rounded-lg border border-gray-200
                                 py-2 pl-9 pr-3 text-sm
@@ -56,10 +58,7 @@
 
 
                     {{-- Filter --}}
-                    <div
-                        class="relative"
-                        x-data="{ open: false }"
-                    >
+                    <div class="hidden relative" x-data="{ open: false }">
 
                         <button
                             type="button"
@@ -175,7 +174,9 @@
 
                     </div>
 
-                </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"><i class="ti ti-search"></i> Search</button>
+                    <a href="{{ route('supervisor.pending-approvals') }}" class="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Reset</a>
+                </form>
 
 
                 <!-- Pending List -->
@@ -197,206 +198,41 @@
                     <div class="p-4 flex flex-col gap-3">
 
 
-                        <!-- JO 1045 -->
-                        <div class="border border-gray-200 rounded-xl p-4">
-
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
-                                <div class="min-w-0">
-
-                                    <div class="flex items-center gap-2">
-
-                                        <p class="font-medium text-sm">
-                                            JO-1045
-                                        </p>
-
-                                        <span class="bg-amber-50 text-amber-700 text-xs px-2 py-1 rounded-md">
-                                            Pending
-                                        </span>
-
+                        @forelse ($jobOrders as $jobOrder)
+                            <div class="rounded-xl border border-gray-200 p-4">
+                                <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-sm font-medium">JO-{{ $jobOrder->job_order_id }}</p>
+                                            <span class="rounded-md bg-amber-50 px-2 py-1 text-xs text-amber-700">Pending</span>
+                                        </div>
+                                        <p class="mt-1 text-sm">{{ trim(($jobOrder->customer?->first_name ?? '').' '.($jobOrder->customer?->middle_name ?? '').' '.($jobOrder->customer?->last_name ?? '')) ?: 'Unknown customer' }}</p>
+                                        <p class="mt-0.5 text-xs text-gray-500">{{ $jobOrder->vehicle?->make ?? 'Unknown vehicle' }} {{ $jobOrder->vehicle?->engine_model ?? '' }} · {{ $jobOrder->services->first()?->job_desc ?? 'Service not set' }}</p>
+                                        <p class="mt-1 text-xs text-gray-400">Submitted by {{ $jobOrder->creator?->name ?? 'Unknown user' }} · {{ $jobOrder->date_issued ? \Illuminate\Support\Facades\Date::parse($jobOrder->date_issued)->format('M d, Y') : 'N/A' }}</p>
                                     </div>
 
-                                    <p class="text-sm mt-1">
-                                        Juan Dela Cruz
-                                    </p>
-
-                                    <p class="text-xs text-gray-500 mt-0.5">
-                                        Toyota Vios · Brake repair
-                                    </p>
-
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        Submitted by John Cuyos · Sep 12, 2026
-                                    </p>
-
-                                </div>
-
-
-                                <div class="flex items-center gap-2 shrink-0">
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                    >
-                                        <i class="ti ti-eye"></i>
-                                        Review
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm hover:bg-green-100"
-                                    >
-                                        <i class="ti ti-check"></i>
-                                        Approve
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm hover:bg-red-100"
-                                    >
-                                        <i class="ti ti-x"></i>
-                                        Reject
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- JO 1044 -->
-                        <div class="border border-gray-200 rounded-xl p-4">
-
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
-                                <div class="min-w-0">
-
-                                    <div class="flex items-center gap-2">
-
-                                        <p class="font-medium text-sm">
-                                            JO-1044
-                                        </p>
-
-                                        <span class="bg-amber-50 text-amber-700 text-xs px-2 py-1 rounded-md">
-                                            Pending
-                                        </span>
-
+                                    <div class="flex shrink-0 flex-wrap items-center gap-2">
+                                        <a href="{{ route('job-orders.show', $jobOrder) }}" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="ti ti-eye"></i> Review</a>
+                                        <form method="POST" action="{{ route('supervisor.job-orders.approve', $jobOrder) }}">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700 hover:bg-green-100"><i class="ti ti-check"></i> Approve</button>
+                                        </form>
                                     </div>
-
-                                    <p class="text-sm mt-1">
-                                        Ana Reyes
-                                    </p>
-
-                                    <p class="text-xs text-gray-500 mt-0.5">
-                                        Honda Civic · Oil change
-                                    </p>
-
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        Submitted by Sharwen Lopez · Sep 12, 2026
-                                    </p>
-
                                 </div>
 
-
-                                <div class="flex items-center gap-2 shrink-0">
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                    >
-                                        <i class="ti ti-eye"></i>
-                                        Review
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm hover:bg-green-100"
-                                    >
-                                        <i class="ti ti-check"></i>
-                                        Approve
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm hover:bg-red-100"
-                                    >
-                                        <i class="ti ti-x"></i>
-                                        Reject
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- JO 1043 -->
-                        <div class="border border-gray-200 rounded-xl p-4">
-
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
-                                <div class="min-w-0">
-
-                                    <div class="flex items-center gap-2">
-
-                                        <p class="font-medium text-sm">
-                                            JO-1043
-                                        </p>
-
-                                        <span class="bg-amber-50 text-amber-700 text-xs px-2 py-1 rounded-md">
-                                            Pending
-                                        </span>
-
+                                <form method="POST" action="{{ route('supervisor.job-orders.reject', $jobOrder) }}" class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
+                                    @csrf
+                                    <div class="min-w-0 flex-1">
+                                        <label for="remarks_{{ $jobOrder->job_order_id }}" class="mb-1 block text-xs font-medium text-gray-600">Rejection remarks</label>
+                                        <input id="remarks_{{ $jobOrder->job_order_id }}" name="remarks" type="text" value="{{ old('remarks') }}" required maxlength="1000" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-100">
+                                        <x-input-error :messages="$errors->get('remarks')" class="mt-1" />
                                     </div>
-
-                                    <p class="text-sm mt-1">
-                                        Mark Santos
-                                    </p>
-
-                                    <p class="text-xs text-gray-500 mt-0.5">
-                                        Ford Ranger · Engine check
-                                    </p>
-
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        Submitted by John Cuyos · Sep 11, 2026
-                                    </p>
-
-                                </div>
-
-
-                                <div class="flex items-center gap-2 shrink-0">
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                    >
-                                        <i class="ti ti-eye"></i>
-                                        Review
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg bg-green-50 text-green-700 px-3 py-2 text-sm hover:bg-green-100"
-                                    >
-                                        <i class="ti ti-check"></i>
-                                        Approve
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm hover:bg-red-100"
-                                    >
-                                        <i class="ti ti-x"></i>
-                                        Reject
-                                    </button>
-
-                                </div>
-
+                                    <button type="submit" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 hover:bg-red-100"><i class="ti ti-x"></i> Reject</button>
+                                </form>
                             </div>
-
-                        </div>
-
+                        @empty
+                            <div class="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">No job orders are awaiting approval.</div>
+                        @endforelse
 
                     </div>
 
